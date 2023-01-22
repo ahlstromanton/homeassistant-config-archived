@@ -1,0 +1,134 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+recorder:
+  db_url: mysql://homeassistant:Jd2DyYfGj1q1Dw51Terqsv7U@core-mariadb/homeassistant?charset=utf8mb4
+  
+# InfluxDB
+influxdb:
+  host: 192.168.1.200
+  port: 8086
+  database: homeassistant
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+  
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+tts:
+  - platform: google_translate
+    language: "sv"
+
+    
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+
+zone:
+  - name: Home
+    latitude: !secret home_latitude
+    longitude: !secret home_longitude
+    radius: 50
+    icon: mdi:home-circle
+
+binary_sensor:
+  - platform: workday
+    country: SE
+
+#### Proximity ####
+
+proximity:
+  home:
+    devices:
+      - device_tracker.antons_s21_ultra
+      - device_tracker.kajsa_apelqvist
+      - device_tracker.kajsas_iphone
+    tolerance: 50
+    unit_of_measurement: m
+
+
+
+#### Used for Roborock map card ####      
+camera:
+  - platform: xiaomi_cloud_map_extractor
+    host: 192.168.1.4
+    token: !secret roborock_token
+    username: !secret roborock_username
+    password: !secret roborock_password
+    draw: ['all']
+    attributes:
+      - calibration_points
+    colors:
+      color_map_outside: [0, 0, 0]
+      color_map_inside: [102, 102, 102]
+      color_path: [255, 255, 66]
+      color_charger_outline: [255, 255, 255]
+      color_charger: [255, 0, 0]
+      color_map_wall: [255, 255, 255]
+      color_map_wall_v2: [255, 255, 255]
+      color_grey_wall: [255, 255, 255]
+      color_robo: [25, 25, 25]
+      color_robo_outline: [255, 255, 66]
+      color_no_go_zones_outline: [145, 7, 7]
+      color_no_go_zones: [97, 5, 5]
+      color_new_discovered_area: [102, 102, 102]
+      color_unknown: [0, 0, 0]
+    room_colors:
+      1: [102, 102, 102]
+      2: [102, 102, 102]
+      3: [102, 102, 102]
+      4: [102, 102, 102]
+      5: [102, 102, 102]
+      6: [102, 102, 102]
+      7: [102, 102, 102]
+      8: [102, 102, 102]
+      9: [102, 102, 102]
+      10: [102, 102, 102]
+      11: [102, 102, 102]
+      12: [102, 102, 102]
+      
+
+
+      
+# Custom HACS integration for Samsung TV Vardagsrum
+media_player:
+  - platform: samsungtv_tizen
+    host: 192.168.1.2
+    mac: 98:06:3C:F0:13:0E
+    name: "Samsung TV Vardagsrum"
+    app_list: '{"Netflix":"11101200001", "Youtube":"111299001912", "Spotify": "3201606009684"}'
+    api_key: !secret smartthings_tv_api_key
+    device_id: !secret smartthings_tv_device_id
+
+# Switch and climate control for RPi fan    
+switch:
+  - platform: rpi_gpio
+    ports:
+      14: RPI Cooling Fan
+
+climate:
+  - platform: generic_thermostat
+    name: RPI Cooling Fan Controller
+    heater: switch.rpi_cooling_fan
+    target_sensor: sensor.processor_temperature
+    min_temp: 30
+    max_temp: 90
+    ac_mode: true
+    target_temp: 58
+    cold_tolerance: 5
+    hot_tolerance: 3
+    min_cycle_duration: 
+      seconds: 60
+    keep_alive:
+      minutes: 5
+    initial_hvac_mode: "cool"
+    
+
+

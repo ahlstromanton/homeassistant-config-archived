@@ -1,0 +1,105 @@
+########## SENSORS #########
+
+        ### Visa tid och datum ###
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'date_time_utc'
+      - 'time_date'
+
+    ### Övervakning av Raspberry Pi ###
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: memory_use_percent
+      - type: processor_use
+      - type: processor_temperature
+      
+    ### Översätt väder-states från SMHI till svenska ###  
+  - platform: template
+    sensors:
+      weather_translation:
+        friendly_name: "Current Weather Translation"
+        value_template: >
+          {% if states.weather.smhi_home.state == "rainy" %}
+            Regn
+          {% elif states.weather.smhi_home.state == "sunny" %}
+            Solsken
+          {% elif states.weather.smhi_home.state == "cloudy" %}
+            Molnigt
+          {% elif states.weather.smhi_home.state == "partlycloudy" %}
+            Halvklart 
+          {% elif states.weather.smhi_home.state == "fog" %}
+            Dimmigt 
+          {% else %}
+            Unknown
+          {% endif %}
+     
+    ### Översätt veckodagar till svenska ###      
+  - platform: template
+    sensors:
+      current_weekday_translation:
+        friendly_name: "Current Weekday Translation"
+        value_template: >
+          {% set current_weekday = now().strftime('%A') %}
+          {% if current_weekday == "Monday" %}
+            Måndag
+          {% elif current_weekday == "Tuesday" %}
+            Tisdag
+          {% elif current_weekday == "Wednesday" %}
+            Onsdag
+          {% elif current_weekday == "Thursday" %}
+            Torsdag
+          {% elif current_weekday == "Friday" %}
+            Fredag
+          {% elif current_weekday == "Saturday" %}
+            Lördag
+          {% elif current_weekday == "Sunday" %}
+            Söndag
+          {% endif %}
+    
+    ### Minuter kvar till nästa alarm på Antons S21 Ultra ###      
+  - platform: template
+    sensors:
+      minutes_next_alarm_anton:
+        friendly_name: "Minutes until Next Alarm Anton"
+        unit_of_measurement: 'm'
+        #entity_id: sensor.time
+        value_template: >-
+          {% set dummy = states("sensor.time") %}
+          {{((states('sensor.antons_s21_ultra_next_alarm')|as_timestamp|int - now()|as_timestamp|int)/60)|int}}
+        availability_template: "{{ not is_state('sensor.antons_s21_ultra_next_alarm','unavailable') }}"
+        attribute_templates:
+          time: "{{ state_attr('sensor.antons_s21_ultra_next_alarm','Local Time') }}"
+          
+  - platform: template
+    sensors:
+      lights_nr_on:
+        friendly_name: "Antal lampor på"
+        value_template:  "{{ expand('light.all_lights')
+          | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id')
+          | select('search', 'light.*')
+          | list
+          | count
+          }} "
+      switch_nr_on:
+        friendly_name: "Antal switchar på"
+        value_template:  "{{ expand('switch.all_switches')
+          | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id')
+          | select('search', 'switch.*')
+          | list
+          | count
+          }} "
+    ### ESPresense ###      
+  - platform: mqtt_room
+    name: "Soptunna Tile ESPresense"
+    device_id: "tile:e46fdc0b8c64"
+    state_topic: "espresense/rooms"
+    timeout: 20
+    away_timeout: 60
+    

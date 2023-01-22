@@ -1,0 +1,1298 @@
+- id: '1671756785454'
+  alias: Notis - RPi över 65 grader
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.processor_temperature
+    above: 65
+  condition: []
+  action:
+  - device_id: 09b5406ffd6ebdf54e968106e50a56d9
+    domain: mobile_app
+    type: notify
+    message: RPi temp över 65
+  mode: single
+- id: '1671787019559'
+  alias: Ljus/Vibration - Vibrationssensor Stol - Tänd i Antons kontor
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.antons_kontor_vibrationssensor
+    to: 'on'
+  condition:
+  - condition: state
+    state: 'off'
+    entity_id: light.bordslampa_antons_kontor_light
+  action:
+  - type: turn_on
+    device_id: 54ce37e85ac52ca0c322f3a651ee4730
+    entity_id: light.ljusgrupp_antons_kontor_antons_kontor_zigbee_group_zha_group_0x0002
+    domain: light
+    brightness_pct: 80
+  mode: single
+- id: '1671812515192'
+  alias: Kontroll - Hall - Mittenknapp - Hallampa På/av
+  description: ''
+  trigger:
+  - device_id: a53f50b2511f7221e4af7b6341bc89e2
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_on
+  condition: []
+  action:
+  - type: toggle
+    device_id: eb6637c3cb01277791dfe5ad585283b2
+    entity_id: light.hall_taklampa_light
+    domain: light
+  mode: single
+- id: '1672151408736'
+  alias: Ljus - Släck alla lampor när alla gått hemifrån
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: zone.home
+    below: 1
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition:
+  - type: is_not_occupied
+    condition: device
+    device_id: 69a435c1f007eae966bddf437d86b5bb
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      area_id:
+      - antons_kontor
+      - gastrum
+      - hall
+      - innergard
+      - kajsas_kontor
+      - kontor
+      - kok
+      - matplats
+      - sovrum
+      - tvattstuga
+      - uterum
+      - vardagsrum
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Släckte alla lampor pga ingen hemma på 15 min
+  mode: restart
+- id: '1672219380991'
+  alias: Motion - God morgon-meddelande
+  description: ''
+  trigger:
+  - type: occupied
+    platform: device
+    device_id: 69a435c1f007eae966bddf437d86b5bb
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    domain: binary_sensor
+  condition:
+  - condition: time
+    weekday:
+    - sun
+    - sat
+    - fri
+    - thu
+    - wed
+    - tue
+    - mon
+    after: 06:00:00
+    before: '12:00:00'
+  - condition: state
+    entity_id: input_boolean.morgon_automation_fired
+    state: 'off'
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.sonos_voylm_vardagsrum_50
+    metadata: {}
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_vardagsrum_2
+      message: God morgon! Idag är det {{ states('sensor.current_weekday_translation')
+        }}, klockan är {{ now().strftime('%-H:%M') }}. Idag är det {{ states('sensor.weather_translation')
+        }} och {{ state_attr('weather.smhi_home', 'temperature') }} grader varmt och
+        det blåser {{ state_attr('weather.smhi_home', 'wind_speed') }} meter per sekund.
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.morgon_automation_fired
+  - service: script.spela_p3_i_vardagsrummet
+    data: {}
+    enabled: false
+  mode: single
+- id: '1672230607518'
+  alias: Input Boolean - Turn off (Reset) every night
+  description: ''
+  trigger:
+  - platform: time
+    at: 04:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.morgon_automation_fired
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.morning_alarm_triggered_today
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.morgon_motion_overvaning_fired
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.morgon_rullgardin_upp_fired
+  mode: single
+- id: '1672242050127'
+  alias: Kamera - Notification Altandörr
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: a10b9c949ecce473c50ce514ffe33800
+    entity_id: binary_sensor.altandorr_motion
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: camera.snapshot
+    data:
+      filename: /config/www/altandorr.png
+    target:
+      entity_id: camera.altandorr_hd_stream
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      title: Kamera-notis
+      message: Rörelse upptäcktes vid uterummet
+      data:
+        image: /local/altandorr.png
+        clickAction: /lovelace/cameras
+  - service: notify.mobile_app_liosh4yht2qr0f0n
+    data:
+      message: Rörelse upptäcktes vid uterummet
+      title: Kamera-notis
+      data:
+        image: /local/altandorr.png
+        attachment:
+          url: /lovelace/cameras
+  - service: notify.desktop
+    data:
+      message: Rörelse upptäcktes vid uterummet
+      title: Kamera-notis
+      data:
+        image: /api/camera_proxy/camera.altandorr_hd_stream
+        duration: 10
+  - repeat:
+      while:
+      - type: is_motion
+        condition: device
+        device_id: a10b9c949ecce473c50ce514ffe33800
+        entity_id: binary_sensor.altandorr_motion
+        domain: binary_sensor
+      sequence:
+      - service: camera.snapshot
+        data:
+          filename: /config/www/camera_history/altandorr_history_{{ now().strftime("%Y%m%d-%H%M%S")
+            }}.png
+        target:
+          entity_id: camera.altandorr_hd_stream
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 500
+  mode: single
+- id: '1672308858973'
+  alias: Notis - Sophämtning
+  description: ''
+  trigger:
+  - platform: time
+    at: '19:30:00'
+  condition:
+  - condition: state
+    entity_id: sensor.sophamtning
+    state: tomorrow
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.sonos_voylm_vardagsrum_50
+    metadata: {}
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_antons_kontor
+      message: Glöm inte att ställa ut soporna!
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_vardagsrum_2
+      message: Glöm inte att ställa ut soporna!
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: "\U0001F5D1 Glöm inte att ställa ut soporna!"
+  - service: notify.mobile_app_liosh4yht2qr0f0n
+    data:
+      message: "\U0001F5D1 Glöm inte att ställa ut soporna!"
+  mode: single
+- id: '1672322434821'
+  alias: TEMPLATE - blinka 3 gånger rött A kontor
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: scene.create
+    data:
+      snapshot_entities:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+      scene_id: resetkontor
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 500
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 10
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 400
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 100
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 500
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 10
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 400
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 100
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 500
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 10
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 400
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 100
+    target:
+      entity_id:
+      - light.hogtalarlampa_antons_kontor_light
+      - light.bordslampa_antons_kontor_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: scene.turn_on
+    target:
+      entity_id: scene.resetkontor
+    data: {}
+  mode: single
+- id: '1672666653422'
+  alias: Ljus/Motion - Tänd nedervåning
+  description: ''
+  trigger:
+  - type: occupied
+    platform: device
+    device_id: 69a435c1f007eae966bddf437d86b5bb
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    domain: binary_sensor
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: light.vardagsrum_golvlampa_light
+      attribute: brightness
+      state: '64'
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.ljus_tod_morgon
+        state: 'on'
+      sequence:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.ljus_nedervaning_kvall
+        metadata: {}
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.ljus_tod_dag
+        state: 'on'
+      sequence:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.ljus_nedervaning_dag
+        metadata: {}
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.ljus_tod_kvall
+        state: 'on'
+      sequence:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.ljus_nedervaning_kvall
+        metadata: {}
+  mode: restart
+- id: '1672700007142'
+  alias: Notis - Sally hämtades
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.anton
+    - person.kajsa
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    from: Christina Hundvakt
+  condition:
+  - condition: time
+    after: '12:00:00'
+  action:
+  - service: notify.mobile_app_liosh4yht2qr0f0n
+    data:
+      message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
+    enabled: true
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
+  mode: single
+- id: '1672730846458'
+  alias: Kontroll - Sovrum
+  description: Använder trigger-id för att konsolidera fyra actions till en automation
+  trigger:
+  - device_id: 2f7d417bfd58de0f0775c2e051e1e5c6
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_up
+    id: on-long
+  - device_id: 2f7d417bfd58de0f0775c2e051e1e5c6
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_on
+    id: on-short
+  - device_id: 2f7d417bfd58de0f0775c2e051e1e5c6
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_off
+    id: off-short
+  - device_id: 2f7d417bfd58de0f0775c2e051e1e5c6
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_down
+    id: off-long
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: on-long
+      sequence:
+      - service: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.lumi_lumi_curtain_acn002_cover
+    - conditions:
+      - condition: trigger
+        id: on-short
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.julstjarna_sovrum
+    - conditions:
+      - condition: trigger
+        id: off-short
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.julstjarna_sovrum
+    - conditions:
+      - condition: trigger
+        id: off-long
+      sequence:
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.lumi_lumi_curtain_acn002_cover
+  mode: single
+- id: '1672738505494'
+  alias: Kontroll - Kajsas Kontor
+  description: ''
+  trigger:
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_off
+    id: off-short
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_on
+    id: on-short
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_up
+    id: on-long
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_down
+    id: off-long
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: left
+    id: vanster
+  - device_id: 0418be9d66ac07b618c5a8438a1602d7
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: right
+    id: hoger
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: off-short
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id: kajsas_kontor
+    - conditions:
+      - condition: trigger
+        id: on-short
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          area_id: kajsas_kontor
+    - conditions:
+      - condition: trigger
+        id: on-long
+      sequence:
+      - device_id: 33d095387f94a5483f22b6f667ce9043
+        domain: light
+        entity_id: light.bollampa_kajsas_kontor_light
+        type: brightness_increase
+    - conditions:
+      - condition: trigger
+        id: off-long
+      sequence:
+      - device_id: 33d095387f94a5483f22b6f667ce9043
+        domain: light
+        entity_id: light.bollampa_kajsas_kontor_light
+        type: brightness_decrease
+    - conditions:
+      - condition: trigger
+        id: vanster
+      sequence:
+      - service: light.turn_on
+        entity_id: light.bollampa_kajsas_kontor_light
+        data:
+          hs_color:
+          - '{{ range(0,360) | random }}'
+          - '{{ range(70,100) | random }}'
+    - conditions:
+      - condition: trigger
+        id: hoger
+      sequence:
+      - service: light.turn_on
+        entity_id: light.bollampa_kajsas_kontor_light
+        data:
+          hs_color:
+          - '{{ range(0,360) | random }}'
+          - '{{ range(70,100) | random }}'
+  mode: single
+- id: '1672740658350'
+  alias: Kontroll - Matplats
+  description: ''
+  trigger:
+  - device_id: bf296ee297fa2e6d61e6fac3e183111d
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_up
+    id: up-long
+  - device_id: bf296ee297fa2e6d61e6fac3e183111d
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_on
+    id: mitten
+  - device_id: bf296ee297fa2e6d61e6fac3e183111d
+    domain: zha
+    platform: device
+    type: remote_button_long_press
+    subtype: dim_down
+    id: down-long
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: up-long
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          area_id:
+          - vardagsrum
+          - kok
+          - matplats
+          - uterum
+    - conditions:
+      - condition: trigger
+        id: mitten
+      sequence:
+      - service: light.toggle
+        data:
+          brightness: 255
+        target:
+          entity_id: light.hall_taklampa_light
+    - conditions:
+      - condition: trigger
+        id: down-long
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id:
+          - vardagsrum
+          - tvattstuga
+          - uterum
+          - kok
+          - hall
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.samsung_8_series_65
+      - service: media_player.media_pause
+        data: {}
+        target:
+          entity_id: media_player.sonos_vardagsrum_2
+  mode: single
+- id: '1672740848462'
+  alias: Counters - Increments
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.anton
+    to: Gymmet
+    for:
+      minutes: 20
+    id: anton-gymmet
+  - platform: state
+    entity_id:
+    - person.anton
+    to: ICA Hajen
+    for:
+      hours: 0
+      minutes: 7
+      seconds: 0
+    id: anton-hajen
+  - platform: state
+    entity_id:
+    - person.anton
+    to: Willys
+    for:
+      hours: 0
+      minutes: 7
+      seconds: 0
+    id: anton-willys
+  - platform: state
+    entity_id:
+    - person.anton
+    to: COOP Breared
+    for:
+      hours: 0
+      minutes: 7
+      seconds: 0
+    id: anton-coop-breared
+  - platform: state
+    entity_id:
+    - person.kajsa
+    to: Gymmet
+    for:
+      minutes: 20
+    id: kajsa-gymmet
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: anton-gymmet
+      sequence:
+      - service: counter.increment
+        data: {}
+        target:
+          entity_id: counter.anton_gym_counter
+    - conditions:
+      - condition: trigger
+        id: anton-hajen
+      sequence:
+      - service: counter.increment
+        data: {}
+        target:
+          entity_id: counter.anton_handlingscounter
+    - conditions:
+      - condition: trigger
+        id: anton-willys
+      sequence:
+      - service: counter.increment
+        data: {}
+        target:
+          entity_id: counter.anton_handlingscounter
+    - conditions:
+      - condition: trigger
+        id: anton-coop-breared
+      sequence:
+      - service: counter.increment
+        data: {}
+        target:
+          entity_id: counter.anton_handlingscounter
+    - conditions:
+      - condition: trigger
+        id: kajsa-gymmet
+      sequence:
+      - service: counter.increment
+        data: {}
+        target:
+          entity_id: counter.kajsa_gym_counter
+  mode: single
+- id: '1672757996728'
+  alias: Ljus - Utelampa Framsida
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: 0
+    id: tänd
+  - platform: state
+    entity_id:
+    - binary_sensor.vardagsrum_hue_motion_occupancy
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 15
+      seconds: 0
+    alias: släck
+    id: släck
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: tänd
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.framsida_utelampa_huelight
+    - conditions:
+      - condition: trigger
+        id: släck
+      - condition: time
+        after: '22:00:00'
+        before: 05:00:00
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.framsida_utelampa_huelight
+  mode: single
+- id: '1673028992042'
+  alias: Placeholder - Ladda Väggtablet
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.samsung_a8_battery_level
+    below: 20
+    id: laddning-på
+  - platform: numeric_state
+    entity_id: sensor.samsung_a8_battery_level
+    id: laddning-av
+    above: 84
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: laddning-på
+      - condition: numeric_state
+        entity_id: sensor.samsung_a8_battery_temperature
+        below: 36
+      sequence:
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.laddare_a8
+    - conditions:
+      - condition: trigger
+        id: laddning-av
+      sequence:
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.laddare_a8
+  mode: single
+- id: '1673133894286'
+  alias: Varning - Julgrans-plugg overheating/powering
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.julgran_overheating
+    id: overheat
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.julgran_overpowering
+    id: overpower
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.desktop
+    data:
+      message: Julgrans-plugg overheating eller overpowering!
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Julgrans-plugg overheating eller overpowering!
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_antons_kontor
+      message: Julgrans-plugg overheating eller overpowering!
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_vardagsrum_2
+      message: Julgrans-plugg overheating eller overpowering!
+  mode: single
+- id: '1673133965844'
+  alias: Varning - Julstjärne-plugg overheating/powering
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.julstjarna_gastrum_overheating
+    id: overheat
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.julstjarna_gastrum_overpowering
+    id: overpower
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.desktop
+    data:
+      message: Julstjärne-plugg overheating eller overpowering!
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Julstjärne-plugg overheating eller overpowering!
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_antons_kontor
+      message: Julstjärne-plugg overheating eller overpowering!
+  - service: tts.cloud_say
+    data:
+      entity_id: media_player.sonos_vardagsrum_2
+      message: Julstjärne-plugg overheating eller overpowering!
+  mode: single
+- id: '1673211932340'
+  alias: Ljus - Släck på nedervåning om inaktiv i 20min
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.vardagsrum_hue_motion_occupancy
+    for:
+      hours: 0
+      minutes: 45
+      seconds: 0
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: media_player.samsung_tv_vardagsrum
+    state: 'off'
+  - condition: time
+    after: '22:00:00'
+    before: 05:00:00
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      area_id:
+      - hall
+      - kok
+      - matplats
+      - tvattstuga
+      - uterum
+      - vardagsrum
+  - service: notify.desktop
+    data:
+      message: Släckte alla lampor på nedervånignen
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Släckte alla lampor på nedervånignen
+  mode: restart
+- id: '1673371601991'
+  alias: Ljus - Ytterdörr - Blinka A kontor om öppnades
+  description: ''
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 4cb8cced2797af962d8fded7d303531d
+    entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_opening
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: person.anton
+    state: home
+  - condition: device
+    type: is_on
+    device_id: 68d4212426f2b6cab97cee8f3b176fdc
+    entity_id: light.bordslampa_antons_kontor_light
+    domain: light
+  action:
+  - service: automation.trigger
+    data: {}
+    target:
+      entity_id: automation.blinka_kontorslampor
+  mode: single
+- id: '1673372832258'
+  alias: Input Boolean - Hue Motion Vardagsrum aktiv de senaste 10 min
+  description: ''
+  trigger:
+  - type: not_occupied
+    platform: device
+    device_id: 69a435c1f007eae966bddf437d86b5bb
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.hue_motion_sensor_triggad_de_senaste_10_minuterna
+  - delay:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.hue_motion_sensor_triggad_de_senaste_10_minuterna
+  mode: restart
+- id: '1673387384353'
+  alias: Motion - Rullgardin upp/ned, tänd övervåning på morgonen
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: d09c84d6e3ae8647863012ebe67c00e9
+    entity_id: binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    domain: binary_sensor
+  condition:
+  - condition: state
+    entity_id: input_boolean.morgon_rullgardin_upp_fired
+    state: 'off'
+  action:
+  - if:
+    - condition: time
+      after: '21:00:00'
+      before: 04:00:00
+    then:
+    - device_id: a05f479ecf1a282c13303790f4250d4b
+      domain: cover
+      entity_id: cover.lumi_lumi_curtain_acn002_cover
+      type: set_position
+      position: 0
+  - if:
+    - condition: time
+      after: 06:00:00
+      before: '12:00:00'
+    then:
+    - device_id: a05f479ecf1a282c13303790f4250d4b
+      domain: cover
+      entity_id: cover.lumi_lumi_curtain_acn002_cover
+      type: set_position
+      position: 100
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id:
+        - light.fonsterlampa_antons_kontor_light
+        - light.julstjarna_sovrum
+        - light.julstjarna_gastrum
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.morgon_rullgardin_upp_fired
+  mode: single
+- id: '1673395065596'
+  alias: Ljus/Motion - Släck övervåning - Kväll
+  description: Släck om ingen motion upptäcktes på 20 min och dator är låst
+  trigger:
+  - type: no_motion
+    platform: device
+    device_id: d09c84d6e3ae8647863012ebe67c00e9
+    entity_id: binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 7
+      seconds: 0
+  condition:
+  - condition: time
+    after: '22:00:00'
+    before: 05:00:00
+  - condition: state
+    entity_id: person.anton
+    state: home
+  - condition: state
+    entity_id: sensor.desktop_activewindow
+    state: Standardlåsskärm för Windows
+  - condition: state
+    entity_id: media_player.samsung_tv_vardagsrum
+    state: 'off'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      area_id:
+      - antons_kontor
+      - gastrum
+      - kajsas_kontor
+      - sovrum
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Lampor övervåning av - från automation med ingen rörelse + dator av
+  mode: restart
+- id: '1673655891704'
+  alias: Kamera - Notis Trädgård
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: d9bc57aa43450d76907d2744e9227a85
+    entity_id: binary_sensor.garden_motion
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: camera.snapshot
+    data:
+      filename: /config/www/garden.png
+    target:
+      entity_id: camera.garden
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      title: Kamera-notis
+      message: Rörelse upptäcktes i trädgården
+      data:
+        image: /local/garden.png
+        clickAction: /lovelace/cameras
+  - service: notify.mobile_app_liosh4yht2qr0f0n
+    data:
+      message: Rörelse upptäcktes i trädgården
+      title: Kamera-notis
+      data:
+        attachment:
+          content-type: png
+          url: /local/garden.png
+  - service: notify.desktop
+    data:
+      message: Rörelse upptäcktes i trädgården
+      title: Kamera-notis
+      data:
+        image: /local/garden.png
+        duration: 10
+  - repeat:
+      while:
+      - type: is_motion
+        condition: device
+        device_id: d9bc57aa43450d76907d2744e9227a85
+        entity_id: binary_sensor.garden_motion
+        domain: binary_sensor
+      sequence:
+      - service: camera.snapshot
+        data:
+          filename: /config/www/camera_history/garden_history_{{ now().strftime("%Y%m%d-%H%M%S")
+            }}.png
+        target:
+          entity_id: camera.garden
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 500
+  mode: single
+- id: '1673743246869'
+  alias: Varning - Dörrsensor Otillgänglig
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.lumi_lumi_sensor_magnet_aq2_opening
+    to: unavailable
+  condition: []
+  action:
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: Dörrsensor blev otillgänglig
+  mode: single
+- id: '1673903758237'
+  alias: Notis - Rörelse på övervåning om dator igång
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: d09c84d6e3ae8647863012ebe67c00e9
+    entity_id: binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    domain: binary_sensor
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: sensor.desktop_activewindow
+      state: Standardlåsskärm för Windows
+  - condition: time
+    after: '22:00:00'
+    before: 05:00:00
+  action:
+  - service: automation.trigger
+    data:
+      skip_condition: false
+    target:
+      entity_id: automation.blinka_kontorslampor
+  mode: single
+- id: '1674399511318'
+  alias: Kontroll - Hue - Sovrum
+  description: ''
+  trigger:
+  - device_id: 815777ff3648dcef357404ef2cc7192c
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_on
+    id: turn-on
+  - device_id: 815777ff3648dcef357404ef2cc7192c
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: turn_off
+    id: turn-off
+  - device_id: 815777ff3648dcef357404ef2cc7192c
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: dim_up
+    id: cover-up
+  - device_id: 815777ff3648dcef357404ef2cc7192c
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: dim_down
+    id: cover-down
+  - device_id: 815777ff3648dcef357404ef2cc7192c
+    domain: zha
+    platform: device
+    type: remote_button_triple_press
+    subtype: turn_off
+    id: hela-huset-off
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: turn-on
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.sovrum_taklampa_huelight
+    - conditions:
+      - condition: trigger
+        id: turn-off
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.sovrum_taklampa_huelight
+    - conditions:
+      - condition: trigger
+        id: cover-up
+      sequence:
+      - service: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.lumi_lumi_curtain_acn002_cover
+    - conditions:
+      - condition: trigger
+        id: cover-down
+      sequence:
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.lumi_lumi_curtain_acn002_cover
+    - conditions:
+      - condition: trigger
+        id: hela-huset-off
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id:
+          - antons_kontor
+          - gastrum
+          - hall
+          - innergard
+          - kajsas_kontor
+          - matplats
+          - sovrum
+          - tvattstuga
+          - uterum
+          - vardagsrum
+  mode: single
+- id: '1674421241254'
+  alias: Kamera - Notis - Vind
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: 63ec6973193b3f0c57fda63ab9295317
+    entity_id: binary_sensor.kamera_vind_motion
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: camera.snapshot
+    data:
+      filename: /config/www/vind.png
+    target:
+      entity_id: camera.kamera_vind_hd_stream
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      title: Kamera-notis
+      message: Rörelse upptäcktes på vinden
+      data:
+        image: /local/vind.png
+        clickAction: /lovelace/cameras
+  - service: notify.desktop
+    data:
+      message: Rörelse upptäcktes på vinden
+      title: Kamera-notis
+      data:
+        image: /local/vind.png
+        duration: 10
+  - repeat:
+      while:
+      - type: is_motion
+        condition: device
+        device_id: 63ec6973193b3f0c57fda63ab9295317
+        entity_id: binary_sensor.kamera_vind_motion
+        domain: binary_sensor
+      sequence:
+      - service: camera.snapshot
+        data:
+          filename: /config/www/camera_history/vind_history_{{ now().strftime("%Y%m%d-%H%M%S")
+            }}.png
+        target:
+          entity_id: camera.kamera_vind_hd_stream
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 500
+  mode: single
