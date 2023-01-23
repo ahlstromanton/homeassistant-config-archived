@@ -129,6 +129,7 @@ climate:
     keep_alive:
       minutes: 5
     initial_hvac_mode: "cool"
-    
 
-
+# Create service for running Github autopush service     
+shell_command: 
+  pushupdates_to_github: /bin/bash pushupdates.sh 
