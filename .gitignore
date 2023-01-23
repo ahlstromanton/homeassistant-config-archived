@@ -24,7 +24,6 @@ esphome/
 image
 .shopping_list.json
 custom_components
-.HA_VERSION
 blueprints/
 tts/
 zigbee.db
