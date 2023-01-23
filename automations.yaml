@@ -1296,3 +1296,15 @@
           seconds: 0
           milliseconds: 500
   mode: single
+- id: '1674505694918'
+  alias: Find my phone test
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: notify.mobile_app_antons_s21_ultra
+    data:
+      message: TTS
+      data:
+        tts_text: Hej
+  mode: single
