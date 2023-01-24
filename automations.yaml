@@ -1308,3 +1308,14 @@
       data:
         tts_text: Hej
   mode: single
+- id: '1674512073583'
+  alias: Backup - Run shell command to push updates to Github
+  description: ''
+  trigger:
+  - platform: time
+    at: 02:00:00
+  condition: []
+  action:
+  - service: shell_command.pushupdates_to_github
+    data: {}
+  mode: single
