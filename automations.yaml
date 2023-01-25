@@ -376,10 +376,14 @@
   condition:
   - condition: not
     conditions:
+    - condition: device
+      type: is_on
+      device_id: 2562efc2a94933adeec5c4eea5eb7252
+      entity_id: light.bubbellampa_vardagsrum_switch
+      domain: light
     - condition: state
-      entity_id: light.vardagsrum_golvlampa_light
-      attribute: brightness
-      state: '64'
+      entity_id: media_player.samsung_tv_vardagsrum
+      state: playing
   action:
   - choose:
     - conditions:
