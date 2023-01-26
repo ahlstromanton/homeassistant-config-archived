@@ -103,3 +103,22 @@
     timeout: 20
     away_timeout: 60
     
+    
+    ### Västtrafik ###
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Till Lynk & Co
+        from: Varbergs station, Varberg
+        heading: Pumpgatan, Göteborg
+        
+  - platform: vasttrafik
+    key: !secret vasttrafik_key
+    secret: !secret vasttrafik_secret
+    departures:
+      - name: Hem från Lynk & Co
+        from: Pumpgatan, Göteborg
+        heading: Varbergs station, Varberg
+
+    

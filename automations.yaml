@@ -373,17 +373,7 @@
     device_id: 69a435c1f007eae966bddf437d86b5bb
     entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
     domain: binary_sensor
-  condition:
-  - condition: not
-    conditions:
-    - condition: device
-      type: is_on
-      device_id: 2562efc2a94933adeec5c4eea5eb7252
-      entity_id: light.bubbellampa_vardagsrum_switch
-      domain: light
-    - condition: state
-      entity_id: media_player.samsung_tv_vardagsrum
-      state: playing
+  condition: []
   action:
   - choose:
     - conditions:
@@ -903,7 +893,7 @@
     - binary_sensor.vardagsrum_hue_motion_occupancy
     for:
       hours: 0
-      minutes: 45
+      minutes: 15
       seconds: 0
     to: 'off'
   condition:
@@ -1322,4 +1312,30 @@
   action:
   - service: shell_command.pushupdates_to_github
     data: {}
+  mode: single
+- id: '1674668200101'
+  alias: Ljus/Motion - Trapphus - Tänd 30 sec rörelse övervåning
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    to: 'on'
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      brightness_pct: 20
+    target:
+      entity_id: light.trapphus
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: light.turn_off
+    data:
+      transition: 5
+    target:
+      entity_id: light.trapphus
   mode: single
