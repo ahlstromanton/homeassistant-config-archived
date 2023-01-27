@@ -133,3 +133,10 @@ climate:
 # Create service for running Github autopush service     
 shell_command: 
   pushupdates_to_github: /bin/bash pushupdates.sh 
+
+
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_token
+    allowed_chat_ids:
+      - 1999256073

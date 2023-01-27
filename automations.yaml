@@ -398,6 +398,9 @@
       - condition: state
         entity_id: binary_sensor.ljus_tod_kvall
         state: 'on'
+      - condition: state
+        entity_id: media_player.samsung_tv_vardagsrum
+        state: 'off'
       sequence:
       - service: scene.turn_on
         target:
@@ -888,21 +891,22 @@
   alias: Ljus - Släck på nedervåning om inaktiv i 20min
   description: ''
   trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.vardagsrum_hue_motion_occupancy
+  - type: not_occupied
+    platform: device
+    device_id: 69a435c1f007eae966bddf437d86b5bb
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    domain: binary_sensor
     for:
       hours: 0
       minutes: 15
       seconds: 0
-    to: 'off'
   condition:
-  - condition: state
-    entity_id: media_player.samsung_tv_vardagsrum
-    state: 'off'
   - condition: time
     after: '22:00:00'
     before: 05:00:00
+  - condition: state
+    entity_id: media_player.samsung_tv_vardagsrum
+    state: 'off'
   action:
   - service: light.turn_off
     data: {}
@@ -1112,6 +1116,10 @@
           minutes: 0
           seconds: 0
           milliseconds: 500
+  - service: telegram_bot.send_video
+    data:
+      url: http://localhost:1984/api/stream.mp4?src=garden&duration=15
+      caption: Rörelse upptäcktes i trädgården
   mode: single
 - id: '1673743246869'
   alias: Varning - Dörrsensor Otillgänglig
