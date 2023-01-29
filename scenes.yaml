@@ -121,27 +121,28 @@
       supported_features: 0
       state: unavailable
     switch.julgran:
+      restored: true
       icon: mdi:pine-tree
       friendly_name: Julgran
-      state: 'on'
+      supported_features: 0
+      state: unavailable
     light.julgran:
       supported_color_modes:
       - onoff
-      color_mode: onoff
       friendly_name: Julgran
       supported_features: 0
-      state: 'on'
+      state: unavailable
     switch.julstjarna_vanster_vardagsrum:
       device_class: switch
       icon: mdi:star
       friendly_name: Julstjärna Vänster Vardagsrum
-      state: 'off'
+      state: unavailable
     light.julstjarna_vanster_vardagsrum:
       supported_color_modes:
       - onoff
       friendly_name: Julstjärna Vänster Vardagsrum
       supported_features: 0
-      state: 'off'
+      state: unavailable
     light.vardagsrum_skapslampa_light:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
@@ -178,14 +179,13 @@
       state: 'off'
     switch.vardagsrum_fonsterlampa_switch:
       friendly_name: Fönsterlampa Vardagsrum Switch
-      state: 'on'
+      state: 'off'
     light.vardagsrum_fonsterlampa:
       supported_color_modes:
       - onoff
-      color_mode: onoff
       friendly_name: Fönsterlampa Vardagsrum
       supported_features: 0
-      state: 'on'
+      state: 'off'
     light.vardagsrum_golvlampa_light:
       supported_color_modes:
       - brightness
@@ -200,7 +200,7 @@
       supported_color_modes:
       - brightness
       off_with_transition: false
-      off_brightness: 193
+      off_brightness: 184
       friendly_name: Vägglampa Arm Vardagsrum Light
       supported_features: 40
       state: 'off'

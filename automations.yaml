@@ -227,18 +227,20 @@
     entity_id: sensor.sophamtning
     state: tomorrow
   action:
-  - service: scene.turn_on
-    target:
-      entity_id: scene.sonos_voylm_vardagsrum_50
-    metadata: {}
-  - service: tts.cloud_say
+  - service: media_player.play_media
     data:
-      entity_id: media_player.sonos_antons_kontor
-      message: Glöm inte att ställa ut soporna!
-  - service: tts.cloud_say
+      entity_id: media_player.sonos_kontor_tts
+      media_content_id: media-source://tts/cloud?message=Glöm inte att ställa ut soporna!
+      media_content_type: music
+      extra:
+        volume: 35
+  - service: media_player.play_media
     data:
-      entity_id: media_player.sonos_vardagsrum_2
-      message: Glöm inte att ställa ut soporna!
+      entity_id: media_player.sonos_vardagsrum_tts
+      media_content_id: media-source://tts/cloud?message=Glöm inte att ställa ut soporna!
+      media_content_type: music
+      extra:
+        volume: 45
   - service: notify.mobile_app_antons_s21_ultra
     data:
       message: "\U0001F5D1 Glöm inte att ställa ut soporna!"
@@ -389,6 +391,9 @@
       - condition: state
         entity_id: binary_sensor.ljus_tod_dag
         state: 'on'
+      - condition: state
+        entity_id: media_player.samsung_tv_vardagsrum
+        state: 'off'
       sequence:
       - service: scene.turn_on
         target:
@@ -408,7 +413,7 @@
         metadata: {}
   mode: restart
 - id: '1672700007142'
-  alias: Notis - Sally hämtades
+  alias: Notis - Sally lämnades/hämtades
   description: ''
   trigger:
   - platform: state
@@ -419,18 +424,42 @@
       hours: 0
       minutes: 2
       seconds: 0
-    from: Christina Hundvakt
-  condition:
-  - condition: time
-    after: '12:00:00'
+    to: Christina Hundvakt
+  condition: []
   action:
-  - service: notify.mobile_app_liosh4yht2qr0f0n
-    data:
-      message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
-    enabled: true
-  - service: notify.mobile_app_antons_s21_ultra
-    data:
-      message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
+  - choose:
+    - conditions:
+      - condition: time
+        after: '12:00:00'
+      sequence:
+      - service: notify.mobile_app_liosh4yht2qr0f0n
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
+        enabled: true
+      - service: notify.mobile_app_antons_s21_ultra
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} hämtade Sally!'
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.sally_hos_christina
+  - choose:
+    - conditions:
+      - condition: time
+        after: 00:00:00
+        before: '12:00:00'
+      sequence:
+      - service: notify.mobile_app_liosh4yht2qr0f0n
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} lämnade Sally!'
+        enabled: true
+      - service: notify.mobile_app_antons_s21_ultra
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} lämnade Sally!'
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.sally_hos_christina
   mode: single
 - id: '1672730846458'
   alias: Kontroll - Sovrum
@@ -1346,4 +1375,44 @@
       transition: 5
     target:
       entity_id: light.trapphus
+  mode: single
+- id: '1674911649697'
+  alias: Notis - Dags att hämta Sally
+  description: ''
+  trigger:
+  - platform: time
+    at: '16:15:00'
+  condition:
+  - condition: state
+    entity_id: input_boolean.sally_hos_christina
+    state: 'on'
+  action:
+  - if:
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.sonos_vardagsrum_tts
+        media_content_id: media-source://tts/cloud?message=Det är snart dags att hämta
+          Sally
+        media_content_type: music
+        extra:
+          volume: 40
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.sonos_kontor_tts
+        media_content_id: media-source://tts/cloud?message=Det är snart dags att hämta
+          Sally
+        media_content_type: music
+        extra:
+          volume: 40
+    alias: Announce on speaker if somebody is home
+  - service: notify.mobile_app_liosh4yht2qr0f0n
+    data:
+      message: "Det är snart dags att hämta Sally! \U0001F436"
+  - service: telegram_bot.send_message
+    data:
+      message: "Det är snart dags att hämta Sally! \U0001F436"
   mode: single
