@@ -2,20 +2,6 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
-recorder:
-  db_url: mysql://homeassistant:Jd2DyYfGj1q1Dw51Terqsv7U@core-mariadb/homeassistant?charset=utf8mb4
-  
-# InfluxDB
-influxdb:
-  host: 192.168.1.200
-  port: 8086
-  database: homeassistant
-  username: !secret influxdb_username
-  password: !secret influxdb_password
-  max_retries: 3
-  default_measurement: state
-  
-
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
