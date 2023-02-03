@@ -23,13 +23,12 @@
   condition:
   - condition: state
     state: 'off'
-    entity_id: light.bordslampa_antons_kontor_light
+    entity_id: light.a_kontor_bordslampa_light
   action:
-  - type: turn_on
-    device_id: 54ce37e85ac52ca0c322f3a651ee4730
-    entity_id: light.ljusgrupp_antons_kontor_antons_kontor_zigbee_group_zha_group_0x0002
-    domain: light
-    brightness_pct: 80
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.a_kontor_group
   mode: single
 - id: '1671812515192'
   alias: Kontroll - Hall - Mittenknapp - Hallampa På/av
@@ -58,16 +57,7 @@
       hours: 0
       minutes: 5
       seconds: 0
-  condition:
-  - type: is_not_occupied
-    condition: device
-    device_id: 69a435c1f007eae966bddf437d86b5bb
-    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
-    domain: binary_sensor
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
+  condition: []
   action:
   - service: light.turn_off
     data: {}
@@ -80,7 +70,6 @@
       - kajsas_kontor
       - kontor
       - kok
-      - matplats
       - sovrum
       - tvattstuga
       - uterum
@@ -96,7 +85,7 @@
   - type: occupied
     platform: device
     device_id: 69a435c1f007eae966bddf437d86b5bb
-    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
+    entity_id: binary_sensor.signify_netherlands_b_v_sml003_occupancy
     domain: binary_sensor
   condition:
   - condition: time
@@ -226,6 +215,11 @@
   - condition: state
     entity_id: sensor.sophamtning
     state: tomorrow
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: sensor.soptunna_tile_espresense
+      state: not_home
   action:
   - service: media_player.play_media
     data:
@@ -943,7 +937,6 @@
       area_id:
       - hall
       - kok
-      - matplats
       - tvattstuga
       - uterum
       - vardagsrum
@@ -1056,12 +1049,8 @@
   - type: no_motion
     platform: device
     device_id: d09c84d6e3ae8647863012ebe67c00e9
-    entity_id: binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    entity_id: binary_sensor.trapphus_ikea_motion_sensor_motion
     domain: binary_sensor
-    for:
-      hours: 0
-      minutes: 7
-      seconds: 0
   condition:
   - condition: time
     after: '22:00:00'
@@ -1351,30 +1340,34 @@
     data: {}
   mode: single
 - id: '1674668200101'
-  alias: Ljus/Motion - Trapphus - Tänd 30 sec rörelse övervåning
+  alias: Ljus/Motion - Trapphus - Tänd 3 min rörelse övervåning
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.ikea_of_sweden_tradfri_motion_sensor_motion
+    - binary_sensor.trapphus_ikea_motion_sensor_motion
     to: 'on'
   condition: []
   action:
   - service: light.turn_on
     data:
-      brightness_pct: 20
+      brightness_pct: 25
     target:
-      entity_id: light.trapphus
+      entity_id:
+      - light.signify_netherlands_b_v_lwa011_huelight
+      - light.signify_netherlands_b_v_lwa011_huelight_2
   - delay:
       hours: 0
-      minutes: 0
-      seconds: 30
+      minutes: 3
+      seconds: 0
       milliseconds: 0
   - service: light.turn_off
     data:
       transition: 5
     target:
-      entity_id: light.trapphus
+      entity_id:
+      - light.signify_netherlands_b_v_lwa011_huelight
+      - light.signify_netherlands_b_v_lwa011_huelight_2
   mode: single
 - id: '1674911649697'
   alias: Notis - Dags att hämta Sally

@@ -206,29 +206,6 @@
       state: 'off'
   icon: mdi:lightbulb-group
   metadata: {}
-- id: '1672752862405'
-  name: Utomhus - Allt avstängt
-  entities:
-    switch.uterum_takbelysning_switch:
-      friendly_name: Takbelysning Uterum Switch
-      state: 'off'
-    light.takbelysning_uterum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Switch
-      supported_features: 0
-      state: 'off'
-    light.framsida_utelampa_huelight:
-      supported_color_modes:
-      - brightness
-      off_with_transition: false
-      off_brightness: 254
-      friendly_name: Utelampa Framsida Huelight
-      supported_features: 40
-      state: 'off'
-  metadata:
-    light.ljusgrupp_antons_kontor_utomhus_ljusgrupp_zigbee_zha_group_0x0007:
-      entity_only: true
 - id: '1672753053132'
   name: Hela huset avstängt
   entities:
@@ -456,379 +433,6 @@
       color_mode: onoff
       friendly_name: Ljusstake Kök
       supported_features: 0
-      state: 'on'
-  metadata: {}
-- id: '1672755128102'
-  name: Tänd huset
-  entities:
-    switch.uterum_takbelysning_switch:
-      friendly_name: Takbelysning Uterum Switch
-      state: 'on'
-    light.takbelysning_uterum:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Switch
-      supported_features: 0
-      state: 'on'
-    light.vardagsrum_vagglampa_arm_light:
-      supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 193
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Vägglampa Arm Vardagsrum Light
-      supported_features: 40
-      state: 'on'
-    switch.bubbellampa_vardagsrum_switch_2:
-      friendly_name: Bubbellampa Vardagsrum Switch
-      state: 'on'
-    light.bubbellampa_vardagsrum_switch:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Bubbellampa Vardagsrum Switch
-      supported_features: 0
-      state: 'on'
-    switch.julstjarna_vanster_vardagsrum:
-      device_class: switch
-      icon: mdi:star
-      friendly_name: Julstjärna Vänster Vardagsrum
-      state: 'on'
-    light.julstjarna_vanster_vardagsrum:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Julstjärna Vänster Vardagsrum
-      supported_features: 0
-      state: 'on'
-    switch.vardagsrum_fonsterlampa_switch:
-      friendly_name: Fönsterlampa Vardagsrum Switch
-      state: 'on'
-    light.vardagsrum_fonsterlampa:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Fönsterlampa Vardagsrum
-      supported_features: 0
-      state: 'on'
-    switch.julgran:
-      icon: mdi:pine-tree
-      friendly_name: Julgran
-      state: 'on'
-    light.julgran:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julgran
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    light.vardagsrum_golvlampa_light:
-      supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 217
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Golvlampa Vardagsrum Light
-      supported_features: 40
-      state: 'on'
-    light.vardagsrum_skapslampa_light:
-      min_color_temp_kelvin: 2202
-      max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
-      supported_color_modes:
-      - color_temp
-      color_mode: color_temp
-      brightness: 204
-      color_temp_kelvin: 2958
-      color_temp: 338
-      hs_color:
-      - 27.896
-      - 58.048
-      rgb_color:
-      - 255
-      - 175
-      - 106
-      xy_color:
-      - 0.501
-      - 0.384
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Skåpslampa Matplats Light
-      supported_features: 40
-      state: 'on'
-    switch.kok_ljusstake_switch:
-      friendly_name: Ljusstake Kök Switch
-      state: 'on'
-    light.kok_ljusstake:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Ljusstake Kök
-      supported_features: 0
-      state: 'on'
-    switch.julstjarna_gastrum:
-      icon: mdi:hexagram-outline
-      friendly_name: Julstjärna Gästrum
-      state: 'on'
-    light.julstjarna_gastrum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julstjärna Gästrum
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.julstjarna_kajsas_kontor:
-      device_class: switch
-      icon: mdi:star
-      friendly_name: Julstjärna Kajsas Kontor
-      state: 'on'
-    light.julstjarna_kajsas_kontor:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Julstjärna Kajsas Kontor
-      supported_features: 0
-      state: 'on'
-    light.bollampa_kajsas_kontor_light:
-      min_color_temp_kelvin: 2202
-      max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
-      effect_list:
-      - colorloop
-      supported_color_modes:
-      - color_temp
-      - xy
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Bollampa Kajsas Kontor Light
-      supported_features: 44
-      color_mode: xy
-      brightness: 193
-      hs_color:
-      - 17.103
-      - 83.922
-      rgb_color:
-      - 255
-      - 102
-      - 41
-      xy_color:
-      - 0.633845
-      - 0.34078
-      state: 'on'
-    switch.ikea_of_sweden_tradfri_control_outlet_switch:
-      friendly_name: Julstjärna Sovrum
-      state: 'on'
-    light.julstjarna_sovrum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julstjärna Sovrum
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    cover.lumi_lumi_curtain_acn002_cover:
-      current_position: 100
-      friendly_name: Rullgardin Sovrum Cover
-      supported_features: 15
-      state: open
-    number.lumi_lumi_curtain_acn002_number:
-      min: 0
-      max: 100
-      step: 1
-      mode: auto
-      friendly_name: Rullgardin Sovrum Number
-      state: '100.0'
-    light.fonsterlampa_antons_kontor_light:
-      min_color_temp_kelvin: 2202
-      max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
-      supported_color_modes:
-      - color_temp
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Fönsterlampa Antons Kontor Light
-      supported_features: 40
-      color_mode: color_temp
-      brightness: 193
-      color_temp_kelvin: 2949
-      color_temp: 339
-      hs_color:
-      - 27.911
-      - 58.298
-      rgb_color:
-      - 255
-      - 175
-      - 106
-      xy_color:
-      - 0.501
-      - 0.384
-      state: 'on'
-  metadata: {}
-  icon: mdi:white-balance-sunny
-- id: '1672878626705'
-  name: Ljus - Kväll
-  entities:
-    light.vardagsrum_vagglampa_arm_light:
-      supported_color_modes:
-      - brightness
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Vägglampa Arm Vardagsrum Light
-      supported_features: 40
-      color_mode: brightness
-      brightness: 204
-      state: 'on'
-    switch.bubbellampa_vardagsrum_switch_2:
-      friendly_name: Bubbellampa Vardagsrum Switch
-      state: 'on'
-    light.bubbellampa_vardagsrum_switch:
-      supported_color_modes:
-      - onoff
-      friendly_name: Bubbellampa Vardagsrum Switch
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.julstjarna_vanster_vardagsrum:
-      device_class: switch
-      icon: mdi:star
-      friendly_name: Julstjärna Vänster Vardagsrum
-      state: 'on'
-    light.julstjarna_vanster_vardagsrum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julstjärna Vänster Vardagsrum
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.vardagsrum_fonsterlampa_switch:
-      friendly_name: Fönsterlampa Vardagsrum Switch
-      state: 'on'
-    light.vardagsrum_fonsterlampa:
-      supported_color_modes:
-      - onoff
-      friendly_name: Fönsterlampa Vardagsrum
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.julgran:
-      icon: mdi:pine-tree
-      friendly_name: Julgran
-      state: unavailable
-    light.julgran:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julgran
-      supported_features: 0
-      state: unavailable
-    light.vardagsrum_golvlampa_light:
-      supported_color_modes:
-      - brightness
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Golvlampa Vardagsrum Light
-      supported_features: 40
-      color_mode: brightness
-      brightness: 217
-      state: 'on'
-    light.vardagsrum_skapslampa_light:
-      min_color_temp_kelvin: 2202
-      max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
-      supported_color_modes:
-      - color_temp
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Skåpslampa Matplats Light
-      supported_features: 40
-      color_mode: color_temp
-      brightness: 204
-      color_temp_kelvin: 2398
-      color_temp: 417
-      hs_color:
-      - 29.157
-      - 76.348
-      rgb_color:
-      - 255
-      - 154
-      - 60
-      xy_color:
-      - 0.559
-      - 0.389
-      state: 'on'
-    switch.kok_ljusstake_switch:
-      friendly_name: Ljusstake Kök Switch
-      state: 'on'
-    light.kok_ljusstake:
-      supported_color_modes:
-      - onoff
-      friendly_name: Ljusstake Kök
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.julstjarna_gastrum:
-      icon: mdi:hexagram-outline
-      friendly_name: Julstjärna Gästrum
-      state: 'on'
-    light.julstjarna_gastrum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julstjärna Gästrum
-      supported_features: 0
-      color_mode: onoff
-      state: 'on'
-    switch.julstjarna_kajsas_kontor:
-      device_class: switch
-      icon: mdi:star
-      friendly_name: Julstjärna Kajsas Kontor
-      state: 'on'
-    light.julstjarna_kajsas_kontor:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Julstjärna Kajsas Kontor
-      supported_features: 0
-      state: 'on'
-    light.fonsterlampa_antons_kontor_light:
-      min_color_temp_kelvin: 2202
-      max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
-      supported_color_modes:
-      - color_temp
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Fönsterlampa Antons Kontor Light
-      supported_features: 40
-      color_mode: color_temp
-      brightness: 193
-      color_temp_kelvin: 2666
-      color_temp: 375
-      hs_color:
-      - 28.47
-      - 66.821
-      rgb_color:
-      - 255
-      - 165
-      - 84
-      xy_color:
-      - 0.53
-      - 0.388
-      state: 'on'
-    switch.ikea_of_sweden_tradfri_control_outlet_switch:
-      friendly_name: Julstjärna Sovrum
-      state: 'on'
-    light.julstjarna_sovrum:
-      supported_color_modes:
-      - onoff
-      friendly_name: Julstjärna Sovrum
-      supported_features: 0
-      color_mode: onoff
       state: 'on'
   metadata: {}
 - id: '1673356549152'
@@ -1342,64 +946,71 @@
 - id: '1673378662903'
   name: Ljus - Nedervåning - Kväll
   entities:
-    light.vardagsrum_vagglampa_arm_light:
+    light.vardagsrum_vagglampa_arm:
       supported_color_modes:
       - brightness
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:coach-lamp
+      friendly_name: Vardagsrum Armlampa
+      supported_features: 40
       color_mode: brightness
       brightness: 184
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Vägglampa Arm Vardagsrum Light
-      supported_features: 40
       state: 'on'
-    switch.bubbellampa_vardagsrum_switch_2:
-      friendly_name: Bubbellampa Vardagsrum Switch
+    switch.vardagsrum_bubbellampa_switch_2:
+      friendly_name: Vardagsrum Bubbellampa Switch
       state: 'on'
-    light.bubbellampa_vardagsrum_switch:
+    light.vardagsrum_bubbellampa:
       supported_color_modes:
       - onoff
+      friendly_name: Vardagsrum Bubbellampa
+      supported_features: 0
       color_mode: onoff
-      friendly_name: Bubbellampa Vardagsrum Switch
-      supported_features: 0
       state: 'on'
-    switch.julstjarna_vanster_vardagsrum:
-      device_class: switch
-      icon: mdi:star
-      friendly_name: Julstjärna Vänster Vardagsrum
-      state: unavailable
-    light.julstjarna_vanster_vardagsrum:
+    switch.kok_ljusstake_switch:
+      friendly_name: Vardagsrum Skåp Orange Switch
+      state: 'on'
+    light.vardagsrum_skap_orange:
       supported_color_modes:
       - onoff
-      friendly_name: Julstjärna Vänster Vardagsrum
+      friendly_name: Vardagsrum Skåp Orange
       supported_features: 0
-      state: unavailable
-    switch.vardagsrum_fonsterlampa_switch:
-      friendly_name: Fönsterlampa Vardagsrum Switch
-      state: 'on'
-    light.vardagsrum_fonsterlampa:
-      supported_color_modes:
-      - onoff
       color_mode: onoff
-      friendly_name: Fönsterlampa Vardagsrum
-      supported_features: 0
       state: 'on'
-    light.vardagsrum_golvlampa_light:
+    switch.vardagsrum_skapslampa_bred:
+      icon: mdi:hexagram-outline
+      friendly_name: Vardagsrum Skåpslampa Bred
+      state: 'on'
+    light.vardagsrum_skapslampa_bred:
       supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 143
-      off_with_transition: false
-      off_brightness:
-      friendly_name: Golvlampa Vardagsrum Light
-      supported_features: 40
+      - onoff
+      friendly_name: Vardagsrum Skåpslampa Bred
+      supported_features: 0
+      color_mode: onoff
       state: 'on'
-    light.vardagsrum_skapslampa_light:
+    switch.vardagsrum_fonsterlampa_marmor_switch_2:
+      friendly_name: Vardagsrum Fönsterlampa Marmor Switch
+      state: 'on'
+    light.vardagsrum_fonsterlampa_marmor:
+      supported_color_modes:
+      - onoff
+      icon: mdi:lamp
+      friendly_name: Vardagsrum Fönsterlampa Marmor
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.vardagsrum_fonsterlampa_svart:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
       min_mireds: 250
       max_mireds: 454
       supported_color_modes:
       - color_temp
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:floor-lamp
+      friendly_name: Vardagsrum Fönsterlampa Svart
+      supported_features: 40
       color_mode: color_temp
       brightness: 204
       color_temp_kelvin: 2304
@@ -1414,19 +1025,16 @@
       xy_color:
       - 0.569
       - 0.388
+      state: 'on'
+    light.vardagsrum_golvlampa:
+      supported_color_modes:
+      - brightness
       off_with_transition: false
       off_brightness:
-      friendly_name: Skåpslampa Matplats Light
+      icon: mdi:floor-lamp-torchiere-variant
+      friendly_name: Vardagsrum Golvlampa
       supported_features: 40
-      state: 'on'
-    switch.kok_ljusstake_switch:
-      friendly_name: Ljusstake Kök Switch
-      state: 'on'
-    light.kok_ljusstake:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Ljusstake Kök
-      supported_features: 0
+      color_mode: brightness
+      brightness: 143
       state: 'on'
   metadata: {}
