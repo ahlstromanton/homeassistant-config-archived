@@ -23,7 +23,7 @@
   condition:
   - condition: state
     state: 'off'
-    entity_id: light.a_kontor_bordslampa_light
+    entity_id: light.a_kontor_bordslampa
   action:
   - service: light.turn_on
     data: {}
@@ -85,7 +85,7 @@
   - type: occupied
     platform: device
     device_id: 69a435c1f007eae966bddf437d86b5bb
-    entity_id: binary_sensor.signify_netherlands_b_v_sml003_occupancy
+    entity_id: binary_sensor.vardagsrum_hue_motion_occupancy
     domain: binary_sensor
   condition:
   - condition: time
@@ -250,10 +250,13 @@
   action:
   - service: scene.create
     data:
-      snapshot_entities:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
       scene_id: resetkontor
+      snapshot_entities:
+      - light.a_kontor_bokhylla_filament
+      - light.a_kontor_bordslampa
+      - light.a_kontor_fonsterlampa
+      - light.a_kontor_hogtalarlampa
+      - light.a_kontor_led
   - delay:
       hours: 0
       minutes: 0
@@ -267,9 +270,7 @@
       - 0
       brightness_pct: 10
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -283,9 +284,7 @@
       - 0
       brightness_pct: 100
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -299,9 +298,7 @@
       - 0
       brightness_pct: 10
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -315,9 +312,7 @@
       - 0
       brightness_pct: 100
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -331,9 +326,7 @@
       - 0
       brightness_pct: 10
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -347,9 +340,7 @@
       - 0
       brightness_pct: 100
     target:
-      entity_id:
-      - light.hogtalarlampa_antons_kontor_light
-      - light.bordslampa_antons_kontor_light
+      entity_id: light.a_kontor_group
   - delay:
       hours: 0
       minutes: 0
@@ -437,11 +428,16 @@
         data: {}
         target:
           entity_id: input_boolean.sally_hos_christina
-  - choose:
     - conditions:
       - condition: time
-        after: 00:00:00
+        after: 00:00:01
         before: '12:00:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
       sequence:
       - service: notify.mobile_app_liosh4yht2qr0f0n
         data:
@@ -660,7 +656,7 @@
         data:
           brightness: 255
         target:
-          entity_id: light.hall_taklampa_light
+          entity_id: light.hall_taklampa
     - conditions:
       - condition: trigger
         id: down-long
@@ -954,7 +950,7 @@
   - type: opened
     platform: device
     device_id: 4cb8cced2797af962d8fded7d303531d
-    entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_opening
+    entity_id: binary_sensor.hall_dorrsensor_opening
     domain: binary_sensor
   condition:
   - condition: state
@@ -963,11 +959,12 @@
   - condition: device
     type: is_on
     device_id: 68d4212426f2b6cab97cee8f3b176fdc
-    entity_id: light.bordslampa_antons_kontor_light
+    entity_id: light.a_kontor_bordslampa
     domain: light
   action:
   - service: automation.trigger
-    data: {}
+    data:
+      skip_condition: true
     target:
       entity_id: automation.blinka_kontorslampor
   mode: single
@@ -1354,8 +1351,8 @@
       brightness_pct: 25
     target:
       entity_id:
-      - light.signify_netherlands_b_v_lwa011_huelight
-      - light.signify_netherlands_b_v_lwa011_huelight_2
+      - light.trapphus_vagglampa_1
+      - light.trapphus_vagglampa_2
   - delay:
       hours: 0
       minutes: 3
@@ -1366,8 +1363,8 @@
       transition: 5
     target:
       entity_id:
-      - light.signify_netherlands_b_v_lwa011_huelight
-      - light.signify_netherlands_b_v_lwa011_huelight_2
+      - light.trapphus_vagglampa_1
+      - light.trapphus_vagglampa_2
   mode: single
 - id: '1674911649697'
   alias: Notis - Dags att hämta Sally
